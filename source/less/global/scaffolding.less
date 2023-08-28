@@ -1,0 +1,41 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  font-family: @font;
+  line-height: 22px;
+  font-size: 14px;
+  background-color: @basic-grey;
+}
+
+ul {
+  padding: 0 0 0 0;
+  margin: 0 0 0 0;
+}
+
+img {
+  object-fit: contain;
+}
+
+li {
+  list-style: none;
+}
+
+.container {
+  padding: 16px;
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+}
