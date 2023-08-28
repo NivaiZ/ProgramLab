@@ -1,6 +1,6 @@
 ## Тестовое задание для ПрограмЛаб
 
-[Демо проекта](https://nivaiz.github.io/*)
+[Демо проекта](https://nivaiz.github.io/ProgramLab/build/)
 
 Вёрстка: [Илья Галятдинов](https://github.com/NivaiZ/)
 
