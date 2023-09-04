@@ -1,11 +1,18 @@
 .bottom-nav__button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background-color: transparent;
   border: none;
   cursor: pointer;
+
+  &:last-child {
+    padding: 0;
+  }
 }
 
 .bottom-nav__sign {
-  color: @basic-blue;
+  color: rgba(34, 34, 34, 0.60);
   font-size: 12px;
   font-weight: 300;
   line-height: 16px;
@@ -29,13 +36,15 @@
   display: flex;
   flex-direction: column;
   position: relative;
+  flex: 1;
 }
 
 .bottom-nav {
   position: fixed;
+  z-index: 2;
   width: 100%;
-  max-width: min-content;
   bottom: 0;
+  left: 0;
   background-color: @basic-white;
 }
 
@@ -51,7 +60,30 @@
   line-height: 12px;
   letter-spacing: 0.2px;
   position: absolute;
-  right: 0;
+  left: 35px;
+  top: 0;
   border-radius: 66px;
   background-color: @basic-red;
+}
+
+.bottom-nav__wrapper {
+  display: flex;
+  position: relative;
+}
+
+.bottom-nav__container {
+  position: relative;
+}
+
+.bottom-nav__button--active .bottom-nav__svg {
+  transition: 0.5s ease;
+  fill: @basic-blue;
+}
+
+.bottom-nav__button--active .bottom-nav__svg--stroke {
+  stroke: @basic-blue;
+}
+
+.bottom-nav__button--active .bottom-nav__sign {
+  color: @basic-blue;
 }

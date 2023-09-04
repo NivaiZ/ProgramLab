@@ -9,116 +9,126 @@ const rename = require("gulp-rename");
 const htmlmin = require("gulp-htmlmin");
 const del = require("del");
 const sync = require("browser-sync").create();
+const replace = require("gulp-replace");
+const terser = require("gulp-terser");
+const htmlreplace = require("gulp-html-replace");
+
+// Paths
+const paths = {
+  src: {
+    html: "source/*.html",
+    styles: "source/less/style.less",
+    fonts: "source/fonts/*.{woff2,woff}",
+    images: "source/img/**/*.{jpg,jpeg,png,gif,svg}",
+    js: "source/js/*.js",
+    favicon: "source/*.ico",
+  },
+  dest: {
+    folder: "build/",
+    styles: "build/css/",
+    fonts: "build/fonts/",
+    images: "build/img/",
+    js: "build/js/",
+  },
+};
 
 // Styles
-
-const styles = () => {
-  return gulp.src("source/less/style.less")
+function styles() {
+  return gulp
+    .src(paths.src.styles)
     .pipe(plumber())
     .pipe(sourcemap.init())
     .pipe(less())
-    .pipe(postcss([
-      autoprefixer(),
-      csso()
-    ]))
-    .pipe(rename("style.min.css"))
+    .pipe(postcss([autoprefixer(), csso()]))
+    .pipe(rename({ suffix: ".min" }))
     .pipe(sourcemap.write("."))
-    .pipe(gulp.dest("build/css"))
+    .pipe(gulp.dest(paths.dest.styles))
     .pipe(sync.stream());
 }
 
-exports.styles = styles;
-
 // HTML
-
-const html = () => {
-  return gulp.src("source/*.html")
+function html() {
+  return gulp
+    .src(paths.src.html)
+    .pipe(htmlreplace({
+      'js': 'js/index.min.js'
+    }))
     .pipe(htmlmin({ collapseWhitespace: true }))
-    .pipe(gulp.dest("build"));
+    .pipe(replace('style.css', 'style.min.css'))
+    .pipe(gulp.dest(paths.dest.folder));
 }
 
-exports.html = html;
-
-
-// Copy
-
-const copy = (done) => {
-  gulp.src([
-    "source/fonts/*.{woff2,woff}",
-    "source/*.ico",
-    "source/img/**/*.svg",
-    "!source/img/icons/*.svg",
-  ], {
-    base: "source"
-  })
-    .pipe(gulp.dest("build"))
-  done();
+function js() {
+  return gulp
+    .src(paths.src.js)
+    .pipe(plumber())
+    .pipe(sourcemap.init())
+    .pipe(rename({ suffix: ".min" }))
+    .pipe(terser())
+    .pipe(sourcemap.write("."))
+    .pipe(gulp.dest(paths.dest.js))
+    .pipe(sync.stream());
 }
 
-exports.copy = copy;
+// Copy Fonts and Images
+function copy() {
+  return gulp
+    .src([
+      paths.src.fonts,
+      paths.src.images,
+      paths.src.favicon,
+      "source/js/**/*.js" // Включаем JS файлы
+    ], {
+      base: "source"
+    })
+    .pipe(gulp.dest(paths.dest.folder));
+}
+
+function deleteIndexJS() {
+  return del([`${paths.dest.js}index.js`]);
+}
 
 // Clean
-
-const clean = () => {
-  return del("build");
-};
+function clean() {
+  return del(paths.dest.folder);
+}
 
 // Server
-
-const server = (done) => {
+function server(done) {
   sync.init({
     server: {
-      baseDir: "build"
+      baseDir: paths.dest.folder
     },
     cors: true,
     notify: false,
-    ui: false,
+    ui: false
   });
   done();
 }
 
-exports.server = server;
-
 // Reload
-
-const reload = (done) => {
+function reload(done) {
   sync.reload();
   done();
 }
 
 // Watcher
-
-const watcher = () => {
-  gulp.watch("source/less/**/*.less", gulp.series(styles));
-  gulp.watch("source/js/index.js", gulp.series(scripts));
-  gulp.watch("source/*.html", gulp.series(html, reload));
+function watcher() {
+  gulp.watch("source/less/**/*.less", styles);
+  gulp.watch(paths.src.html, gulp.series(html, reload));
+  gulp.watch(paths.src.images, gulp.series(copy, reload));
+  gulp.watch(paths.src.fonts, gulp.series(copy, reload));
+  gulp.watch(paths.src.favicon, gulp.series(copy, reload));
 }
 
 // Build
-
 const build = gulp.series(
   clean,
   copy,
-  gulp.parallel(
-    styles,
-    html,
-  ),
+  gulp.parallel(styles, html, js),
+  deleteIndexJS // Добавляем удаление index.js
 );
-
 exports.build = build;
 
 // Default
-
-
-exports.default = gulp.series(
-  clean,
-  copy,
-  gulp.parallel(
-    styles,
-    html,
-
-  ),
-  gulp.series(
-    server,
-    watcher
-  ));
+exports.default = gulp.series(build, server, watcher);

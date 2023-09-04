@@ -17,9 +17,11 @@
 .search__list {
   display: flex;
   align-items: center;
+  padding: 16px;
 }
 
 .search__enter {
+  top: 0;
   background-color: transparent;
   border: none;
   cursor: pointer;
@@ -54,7 +56,36 @@
 
 .search__item {
   padding-left: 8px;
+
   &:first-child {
     padding-left: 0;
   }
+}
+
+.search__autocomplete--active {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  background-color: @basic-white;
+  overflow-y: scroll;
+  padding: 15px 0 15px 0;
+  max-height: 100vw;
+}
+
+.search__result--item {
+  font-size: 15px;
+  font-weight: 500;
+  padding: 15px;
+  cursor: pointer;
+}
+
+.search__error-message--red {
+  position: fixed;
+  width: 100%;
+  left: 0;
+  padding: 15px;
+  background-color: @basic-white;
+  color: @basic-red;
+  font-size: 15px;
+  font-weight: 500;
 }
