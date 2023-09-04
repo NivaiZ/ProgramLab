@@ -32,8 +32,6 @@ function searchHeaderFunction() {
   const searchError = document.getElementById('search__error--id');
 
   if (searchForm, searchInput, searchError) {
-
-
     searchForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -63,6 +61,20 @@ function searchHeaderFunction() {
       } catch (error) {
         alert('Произошла ошибка: ' + error.message);
       }
+    });
+
+    searchInput.addEventListener('input', () => {
+      const searchText = searchInput.value.trim();
+
+      if (searchText.length < 3) {
+        searchError.textContent = 'Поисковой запрос должен содержать как минимум 3 символа.';
+      } else {
+        searchError.textContent = '';
+      }
+    });
+
+    searchInput.addEventListener('blur', () => {
+      searchError.textContent = '';
     });
   }
 }

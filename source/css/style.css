@@ -409,6 +409,9 @@ li {
   align-items: center;
   padding: 16px;
 }
+.search__form {
+  width: 100%;
+}
 .search__enter {
   top: 0;
   background-color: transparent;
